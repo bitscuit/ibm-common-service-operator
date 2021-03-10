@@ -51,7 +51,7 @@ jobs:
 
       - name: Build operator
         run: |
-          # make build-dev-image
+          make build-dev-image
 
       - name: Generate bundle
         run: |
@@ -62,20 +62,17 @@ jobs:
           chmod +x ./bin/operator-sdk
           make clis
 
-          # yq -i eval ".spec.template.spec.containers[0].image = \"$QUAY_REGISTRY/common-service-operator:dev\"" config/manager/manager.yaml
-          # cat ./config/manager/manager.yaml
+          yq -i eval ".spec.template.spec.containers[0].image = \"$QUAY_REGISTRY/common-service-operator:dev\"" config/manager/manager.yaml
+          cat ./config/manager/manager.yaml
 
-          # make bundle-manifests RELEASE_VERSION=99.99.99
-          # cat ./bundle/manifests/ibm-common-service-operator.clusterserviceversion.yaml
+          make bundle-manifests RELEASE_VERSION=99.99.99
+          cat ./bundle/manifests/ibm-common-service-operator.clusterserviceversion.yaml
 
-          # make build-bundle-image VERSION=dev
+          make build-bundle-image VERSION=dev
 
       - name: Deploy operator
         run: |
-          ls ./bin
-          echo $PATH
-          operator-sdk version
-          # make run-bundle VERSION=dev
+          make run-bundle VERSION=dev
           sleep 20
       
       - name: Test operator
