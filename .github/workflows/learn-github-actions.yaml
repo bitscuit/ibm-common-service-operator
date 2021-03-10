@@ -25,6 +25,7 @@ env:
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
   QUAY_REGISTRY: quay.io/bitscuit
+  PATH: $PATH:$(pwd)/bin # bin directory will hold required CLIs
 
 jobs:
   check-bats-version:
@@ -56,7 +57,6 @@ jobs:
       - name: Generate bundle
         run: |
           mkdir ./bin
-          export PATH=$PATH:$(pwd)/bin
           curl -Lo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_linux_amd64"
           chmod +x ./bin/operator-sdk
           make clis
