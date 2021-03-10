@@ -24,6 +24,7 @@ env:
   AWS_OCP_KUBECONFIG: ${{ secrets.AWS_OCP_KUBECONFIG }}
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+  QUAY_REGISTRY: quay.io/bitscuit
 
 jobs:
   check-bats-version:
@@ -46,7 +47,6 @@ jobs:
 
       - name: Login to registry
         run: |
-          export QUAY_REGISTRY=quay.io/bitscuit
           docker login "$QUAY_REGISTRY" -u "$QUAY_USERNAME" -p "$QUAY_PASSWORD"
 
       - name: Build operator
