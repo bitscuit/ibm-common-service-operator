@@ -41,8 +41,7 @@ jobs:
 
       - name: Save kubeconfig
         run: |
-          oc get nodes || echo "no kubeconfig"
-          echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
+          export KUBECONFIG="$AWS_OCP_KUBECONFIG"
           oc get nodes --kubeconfig=./kubeconfig
 
       - name: Generate bundle manifests
