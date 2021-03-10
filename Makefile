@@ -179,7 +179,7 @@ build-bundle-image:
 
 run-bundle:
 	$(OPERATOR_SDK) run bundle $(QUAY_REGISTRY)/$(BUNDLE_IMAGE_NAME):$(VERSION)
-	sleep 15
+	sleep 20
 	$(KUBECTL) get sub ibm-namespace-scope-operator -o custom-columns=":status.installplan.name" --no-headers \
 		| xargs oc patch installplan --type merge --patch '{"spec":{"approved":true}}'
 	$(KUBECTL) get sub operand-deployment-lifecycle-manager-app -o custom-columns=":status.installplan.name" --no-headers \

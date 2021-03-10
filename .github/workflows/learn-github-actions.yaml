@@ -32,6 +32,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: AWS
+        run: |
+
       - name: Generate bundle manifests
         run: |
           mkdir ./bin

@@ -10,13 +10,13 @@ cat <<EOF | tee >(oc apply -f -) | cat
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: test-cs-operator
+  name: opencloud-operators
   namespace: openshift-marketplace
 spec:
-  displayName: test-cs-operator
+  displayName: opencloud-operators
   publisher: IBM
   sourceType: grpc
-  image: quay.io/opencloudio/ibm-common-service-catalog:3.7.0-beta
+  image: quay.io/opencloudio/ibm-common-service-catalog:3.7.1-rc
   updateStrategy:
     registryPoll:
       interval: 45m
@@ -38,11 +38,11 @@ The actual testing consist of:
    - and any of the operand image values if necessary
 3. build operator with changes
 ```
-make build-dev
+make build-dev-image
 ```
 4. build bundle containing changes and bundle image
 ```
-make bundle-manifests VERSION=99.99.99
+make bundle-manifests RELEASE_VERSION=99.99.99
 make build-bundle-image VERSION=dev
 ```
 5. deploy operator using bundle format
@@ -73,7 +73,7 @@ make run-bundle
    - and any of the operand image values if necessary
 6. build operator with changes
 ```
-make build-dev
+make build-dev-image
 ```
 7. build bundle containing changes and bundle image
 ```
