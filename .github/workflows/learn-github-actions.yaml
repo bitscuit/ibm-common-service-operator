@@ -42,7 +42,7 @@ jobs:
       - name: Access cluster
         run: |
           echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
-          export KUBECONFIG=$(pwd)/kubeconfig
+          cp ./kubeconfig $HOME/.kube/config
           oc get nodes
 
       - name: Login to registry
