@@ -42,6 +42,7 @@ jobs:
       - name: Access cluster
         run: |
           echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
+          mkdir -p /home/runner/.kube
           cp ./kubeconfig $HOME/.kube/config
           oc get nodes
 
