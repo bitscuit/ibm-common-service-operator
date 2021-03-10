@@ -22,6 +22,8 @@ on:
 
 env:
   AWS_OCP_KUBECONFIG: ${{ secrets.AWS_OCP_KUBECONFIG }}
+  QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+  QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
 
 jobs:
   check-bats-version:
@@ -36,20 +38,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: AWS
-        run: |
-
-      - name: Save kubeconfig
+      - name: Access cluster
         run: |
           echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
           export KUBECONFIG=$(pwd)/kubeconfig
           oc get nodes
 
-      - name: Generate bundle manifests
+      - name: Login to registry
+        run: |
+          export QUAY_REGISTRY=quay.io/bitscuit
+          docker login "$QUAY_REGISTRY" -u "$QUAY_USERNAME" -p "$QUAY_PASSWORD"
+
+      - name: Build operator
+        run: |
+          make build-dev-image
+
+      - name: Generate bundle
         run: |
           mkdir ./bin
           export PATH=$PATH:$(pwd)/bin
           curl -Lo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_linux_amd64"
           chmod +x ./bin/operator-sdk
           make clis
-          make bundle-manifests
+
+          yq -i eval '.spec.template.spec.containers[0].image |= "$QUAY_REGISTRY/common-service-operator:dev"' config/manager/manager.yaml
+          cat ./config/manager/manager.yaml
+
+          make bundle-manifests RELEASE_VERSION=99.99.99
+          cat ./bundle/manifests/ibm-common-service-operator.clusterserviceversion.yaml
+
+          make build-bundle-image VERSION=dev
+
+      - name: Deploy operator
+        run: |
+          make run-bundle VERSION=dev
+          sleep 20
+      
+      - name: Test operator
+        run: |
+          oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/ibm-common-service-operator
+          oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/ibm-namespace-scope-operator
+          oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/operand-deployment-lifecycle-manager
