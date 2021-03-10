@@ -25,7 +25,6 @@ env:
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
   QUAY_REGISTRY: quay.io/bitscuit
-  # PATH: "$PATH:$(pwd)/bin" # bin directory will hold required CLIs
 
 jobs:
   check-bats-version:
@@ -45,7 +44,6 @@ jobs:
           echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
           export KUBECONFIG=$(pwd)/kubeconfig
           oc get nodes
-          echo $PATH
 
       - name: Login to registry
         run: |
@@ -58,6 +56,8 @@ jobs:
       - name: Generate bundle
         run: |
           mkdir ./bin
+          export PATH=$PATH:$(pwd)/bin
+          echo "$(pwd)/bin" >> $GITHUB_PATH
           curl -Lo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_linux_amd64"
           chmod +x ./bin/operator-sdk
           make clis
