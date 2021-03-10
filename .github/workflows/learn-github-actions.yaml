@@ -43,7 +43,7 @@ jobs:
         run: |
           oc get nodes || echo "no kubeconfig"
           echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
-          oc get nodes
+          oc get nodes --kubeconfig=./kubeconfig
 
       - name: Generate bundle manifests
         run: |
