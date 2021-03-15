@@ -21,7 +21,7 @@ on:
 
 
 env:
-  AWS_OCP_KUBECONFIG: ${{ secrets.AWS_OCP_KUBECONFIG }}
+  KUBECONFIG: ${{ secrets.AWS_OCP_KUBECONFIG }}
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
   QUAY_REGISTRY: quay.io/bitscuit
@@ -41,9 +41,9 @@ jobs:
 
       - name: Access cluster
         run: |
-          echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
-          mkdir -p /home/runner/.kube
-          cp ./kubeconfig $HOME/.kube/config
+          # echo "$AWS_OCP_KUBECONFIG" > ./kubeconfig
+          # mkdir -p /home/runner/.kube
+          # cp ./kubeconfig $HOME/.kube/config
           oc get nodes
 
       - name: Login to registry

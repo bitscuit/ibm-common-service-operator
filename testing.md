@@ -77,8 +77,8 @@ make build-dev-image
 ```
 7. build bundle containing changes and bundle image
 ```
-make bundle-manifests VERSION=99.99.99
-make build-bundle-image VERSION=dev
+make bundle-manifests RELEASE_VERSION=99.99.99
+make build-bundle-image RELEASE_VERSION=dev
 ```
 8. upgrade operator
 ```
