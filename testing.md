@@ -43,11 +43,11 @@ make build-dev-image
 4. build bundle containing changes and bundle image
 ```
 make bundle-manifests RELEASE_VERSION=99.99.99
-make build-bundle-image VERSION=dev
+make build-bundle-image RELEASE_VERSION=dev
 ```
 5. deploy operator using bundle format
 ```
-make run-bundle VERSION=dev
+make run-bundle RELEASE_VERSION=dev
 ```
 6. run tests
 7. clean up
@@ -61,7 +61,7 @@ Similar to fresh installation test except you will first deploy the operator/bun
 1. change `image` value in config/manager/manager.yaml to `quay.io/<your_namespace>/common-service-operator:3.7.1`
 2. build bundle and bundle image without any changes
 ```
-make bundle
+make bundle-manifests
 make build-bundle-image
 ```
 3. deploy unchanged operator using bundle format
