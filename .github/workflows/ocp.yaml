@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-name: learn-github-actions.yaml
+name: ocp.yaml
 
 on:
   pull_request:
@@ -30,7 +30,7 @@ env:
   SCRATCH_TOKEN: ${{ secrets.SCRATCH_TOKEN}}
 
 jobs:
-  check-bats-version:
+  test-fresh-install:
     runs-on: ubuntu-18.04
     steps:
       - name: Set up Golang
@@ -85,3 +85,8 @@ jobs:
           oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/ibm-common-service-operator
           oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/ibm-namespace-scope-operator
           oc wait --for condition=Available -n ibm-common-services --timeout=60s deployment/operand-deployment-lifecycle-manager
+      
+      - name: Uninstall operator
+        run: |
+          oc project ibm-common-services
+          make cleanup-bundle
