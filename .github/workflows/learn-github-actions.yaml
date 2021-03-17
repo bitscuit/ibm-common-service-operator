@@ -25,6 +25,9 @@ env:
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
   QUAY_REGISTRY: quay.io/bitscuit
+  REGISTRY: hyc-cloud-private-scratch-docker-local.artifactory.swg-devops.com/ibmcom
+  SCRATCH_USERNAME: ${{ secrets.SCRATCH_USERNAME }}
+  SCRATCH_TOKEN: ${{ secrets.SCRATCH_TOKEN}}
 
 jobs:
   check-bats-version:
@@ -49,6 +52,7 @@ jobs:
       - name: Login to registry
         run: |
           docker login "$QUAY_REGISTRY" -u "$QUAY_USERNAME" -p "$QUAY_PASSWORD"
+          docker login "$REGISTRY" -u "$SCRATCH_USERNAME" -p "$SCRATCH_TOKEN"
 
       - name: Build operator
         run: |
@@ -59,8 +63,8 @@ jobs:
           mkdir ./bin
           export PATH=$PATH:$(pwd)/bin
           echo "$(pwd)/bin" >> $GITHUB_PATH
-          curl -Lo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_linux_amd64"
-          chmod +x ./bin/operator-sdk
+          # curl -Lo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_linux_amd64"
+          # chmod +x ./bin/operator-sdk
           make clis
 
           yq -i eval ".spec.template.spec.containers[0].image = \"$QUAY_REGISTRY/common-service-operator:dev\"" config/manager/manager.yaml
@@ -69,11 +73,12 @@ jobs:
           make bundle-manifests RELEASE_VERSION=99.99.99
           cat ./bundle/manifests/ibm-common-service-operator.clusterserviceversion.yaml
 
-          make build-bundle-image VERSION=dev
+          make build-bundle-image RELEASE_VERSION=dev
 
       - name: Deploy operator
         run: |
-          make run-bundle VERSION=dev
+          ./common/scripts/tests/clear_ocp.sh
+          make run-bundle RELEASE_VERSION=dev
           sleep 20
       
       - name: Test operator

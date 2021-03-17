@@ -106,7 +106,7 @@ include common/Makefile.common.mk
 OS    = $(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH  = $(shell uname -m | sed 's/x86_64/amd64/')
 
-clis: yq kustomize
+clis: yq kustomize operator-sdk
 
 yq: ## Install yq, a yaml processor
 ifeq (, $(shell which yq 2>/dev/null))
