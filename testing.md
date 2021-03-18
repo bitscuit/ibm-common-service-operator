@@ -16,7 +16,7 @@ spec:
   displayName: opencloud-operators
   publisher: IBM
   sourceType: grpc
-  image: quay.io/opencloudio/ibm-common-service-catalog:3.7.1-rc
+  image: quay.io/opencloudio/ibm-common-service-catalog:3.7.1
   updateStrategy:
     registryPoll:
       interval: 45m

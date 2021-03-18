@@ -35,7 +35,7 @@ VCS_REF ?= $(shell git rev-parse HEAD)
 VERSION ?= $(shell git describe --exact-match 2> /dev/null || \
                 git describe --match=$(git rev-parse --short=8 HEAD) --always --dirty --abbrev=8)
 RELEASE_VERSION ?= $(shell cat ./version/version.go | grep "Version =" | awk '{ print $$3}' | tr -d '"')
-PREVIOUS_VERSION := 3.7.0
+PREVIOUS_VERSION := 3.7.2
 LATEST_VERSION ?= latest
 
 LOCAL_OS := $(shell uname)
@@ -77,7 +77,7 @@ REGISTRY ?= "hyc-cloud-private-scratch-docker-local.artifactory.swg-devops.com/i
 # Current Operator image name
 OPERATOR_IMAGE_NAME ?= common-service-operator
 # Current Operator bundle image name
-BUNDLE_IMAGE_NAME ?= common-service-operator-bundle
+BUNDLE_IMAGE_NAME ?= dev-common-service-operator-bundle
 
 CHANNELS := v3
 DEFAULT_CHANNEL := v3
@@ -103,8 +103,7 @@ include common/Makefile.common.mk
 
 ##@ Development
 
-OS    = $(shell uname -s | tr '[:upper:]' '[:lower:]')
-ARCH  = $(shell uname -m | sed 's/x86_64/amd64/')
+clis: yq kustomize operator-sdk
 
 clis: yq kustomize operator-sdk
 
@@ -114,10 +113,9 @@ ifeq (, $(shell which yq 2>/dev/null))
 	if [ v$(shell ./bin/yq --version | cut -d ' ' -f3) != $(YQ_VERSION) ]; then\
 		set -e ;\
 		mkdir -p bin ;\
-		$(eval ARCH := $(shell uname -m|sed 's/x86_64/amd64/'))\
 		echo "Downloading yq ...";\
-		curl -sSLO https://github.com/mikefarah/yq/releases/download/$(YQ_VERSION)/yq_$(OS)_$(ARCH);\
-		mv yq_$(OS)_$(ARCH) ./bin/yq ;\
+		curl -sSLO https://github.com/mikefarah/yq/releases/download/$(YQ_VERSION)/yq_$(LOCAL_OS)_$(LOCAL_ARCH);\
+		mv yq_$(LOCAL_OS)_$(LOCAL_ARCH) ./bin/yq ;\
 		chmod +x ./bin/yq ;\
 	fi;\
 	}
@@ -132,7 +130,7 @@ ifeq (, $(shell which kustomize 2>/dev/null))
 	set -e ;\
 	mkdir -p bin ;\
 	echo "Downloading kustomize ...";\
-	curl -sSLo - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(OS)_$(ARCH).tar.gz | tar xzf - -C bin/ ;\
+	curl -sSLo - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/$(KUSTOMIZE_VERSION)/kustomize_$(KUSTOMIZE_VERSION)_$(LOCAL_OS)_$(LOCAL_ARCH).tar.gz | tar xzf - -C bin/ ;\
 	}
 KUSTOMIZE=$(realpath ./bin/kustomize)
 else
@@ -146,7 +144,7 @@ ifeq (, $(shell which operator-sdk 2>/dev/null))
 		set -e ; \
 		mkdir -p bin ;\
 		echo "Downloading operator-sdk..." ;\
-		curl -sSLo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/$(OPERATOR_SDK_VERSION)/operator-sdk_$(OS)_$(ARCH)" ;\
+		curl -sSLo ./bin/operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/$(OPERATOR_SDK_VERSION)/operator-sdk_$(LOCAL_OS)_$(LOCAL_ARCH)" ;\
 		chmod +x ./bin/operator-sdk ;\
 	fi ;\
 	}
@@ -278,13 +276,10 @@ build-operator-image: ## Build the operator image.
 build-push-image: $(CONFIG_DOCKER_TARGET) $(CONFIG_DOCKER_TARGET_QUAY) build-operator-image  ## Build and push the operator images.
 	@echo "Pushing the $(OPERATOR_IMAGE_NAME) docker image for $(LOCAL_ARCH)..."
 	@docker tag $(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION) $(ARTIFACTORYA_REGISTRY)/$(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION)
-	@docker tag $(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION) $(QUAY_REGISTRY)/$(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION)
 	@docker push $(ARTIFACTORYA_REGISTRY)/$(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION)
-	@docker push $(QUAY_REGISTRY)/$(OPERATOR_IMAGE_NAME)-$(LOCAL_ARCH):$(VERSION)
 
 multiarch-image: $(CONFIG_DOCKER_TARGET) $(CONFIG_DOCKER_TARGET_QUAY) ## Generate multiarch images for operator image.
 	@MAX_PULLING_RETRY=20 RETRY_INTERVAL=30 common/scripts/multiarch_image.sh $(ARTIFACTORYA_REGISTRY) $(OPERATOR_IMAGE_NAME) $(VERSION) $(RELEASE_VERSION)
-	@MAX_PULLING_RETRY=20 RETRY_INTERVAL=30 common/scripts/multiarch_image.sh $(QUAY_REGISTRY) $(OPERATOR_IMAGE_NAME) $(VERSION) $(LATEST_VERSION)
 
 ##@ Help
 help: ## Display this help
