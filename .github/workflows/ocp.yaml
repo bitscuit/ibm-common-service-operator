@@ -19,10 +19,6 @@ name: ocp.yaml
 on:
   pull_request:
 
-<<<<<<< HEAD
-
-=======
->>>>>>> automation
 env:
   AWS_OCP_KUBECONFIG: ${{ secrets.AWS_OCP_KUBECONFIG }}
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
