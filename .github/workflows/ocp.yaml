@@ -47,6 +47,7 @@ jobs:
           mkdir -p /home/runner/.kube
           cp ./kubeconfig $HOME/.kube/config
           oc get nodes
+          echo "$QUAY_USERNAME"
 
       - name: Login to registry
         run: |
