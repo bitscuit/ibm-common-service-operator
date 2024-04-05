@@ -7,3 +7,4 @@ type: Opaque
 stringData:
   username: admin
   password: opensesame
+  new: value
