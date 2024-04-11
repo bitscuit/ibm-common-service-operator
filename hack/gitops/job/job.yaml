@@ -16,10 +16,8 @@ spec:
         - -c
         - |
           echo "Downloading convert_to_multi_instance.sh from repo and running it..."
-          git clone https://github.com/IBM/ibm-common-service-operator.git
-          cd ibm-common-service-operator
-          git rev-parse HEAD
+          oc get secrets | grep argo
           sleep 60
-          git rev-parse HEAD
+          oc get secrets | grep argo
       restartPolicy: Never
       backOffLimit: 2
