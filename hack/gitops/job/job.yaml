@@ -9,7 +9,7 @@ spec:
       serviceAccountName: cpfs-utils-sa
       containers:
       - name: cpfs-utils
-        image: quay.io/curl/curl:latest
+        image: quay.io/wire/alpine-git:latest
         imagePullPolicy: Always
         command: 
         - /bin/sh
