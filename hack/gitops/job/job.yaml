@@ -16,6 +16,7 @@ spec:
         - -c
         - |
           echo "Downloading convert_to_multi_instance.sh from repo and running it..."
-          sleep 10
+          git clone https://github.com/IBM/ibm-common-service-operator.git
+          printenv
       restartPolicy: Never
       backOffLimit: 2
