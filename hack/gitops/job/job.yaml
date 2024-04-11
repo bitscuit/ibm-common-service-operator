@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cpfs-utils
+  namespace: default
+spec:
+  template:
+    spec:
+      serviceAccountName: cpfs-utils-sa
+      containers:
+      - name: cpfs-utils
+        image: quay.io/curl/curl:latest
+        imagePullPolicy: Always
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo "Downloading convert_to_multi_instance.sh from repo and running it..."
+      restartPolicy: Never
+      backOffLimit: 2
