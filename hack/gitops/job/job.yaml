@@ -16,8 +16,8 @@ spec:
         - -c
         - |
           echo "Downloading convert_to_multi_instance.sh from repo and running it..."
-          oc get secrets | grep argo
+          oc get configmaps | grep argo
           sleep 60
-          oc get secrets | grep argo
+          oc get configmaps | grep argo
       restartPolicy: Never
       backOffLimit: 2
