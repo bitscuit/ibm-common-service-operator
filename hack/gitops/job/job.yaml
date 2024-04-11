@@ -16,6 +16,6 @@ spec:
         - -c
         - |
           echo "Downloading convert_to_multi_instance.sh from repo and running it..."
-          sleep 10000
+          sleep 10
       restartPolicy: Never
       backOffLimit: 2
