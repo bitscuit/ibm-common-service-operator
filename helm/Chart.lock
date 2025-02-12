@@ -1,0 +1,6 @@
+dependencies:
+- name: ibm-odlm
+  repository: https://na.artifactory.swg-devops.com/artifactory/api/helm/hyc-cloud-private-daily-helm-local
+  version: 4.4.0
+digest: sha256:f7f1f777ad3de9eea4f5a6dcea0e62190982da87d712dd78a77f139a74f008ba
+generated: "2025-02-11T20:42:31.616729519-05:00"

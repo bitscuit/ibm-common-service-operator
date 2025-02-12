@@ -4,3 +4,9 @@ description: A Helm chart for ibm-common-service-operator
 type: application
 version: 4.11.0
 appVersion: 4.11.0
+dependencies:
+- name: ibm-odlm
+  repository: '@cpfs-daily'
+  version: 4.x.x
+  tags:
+  - simplified-install
