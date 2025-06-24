@@ -4,3 +4,4 @@ metadata:
   name: argo-test1
 data:
   test: value
+  test2: value2
